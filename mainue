@@ -1,0 +1,84 @@
+import pygame
+
+pygame.init()
+
+SCREEN_WIDTH = 900
+SCREEN_HEIGHT = 500
+
+Screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+pygame.display.set_caption('Button Demo')
+
+# Load the background image
+background_img = pygame.image.load(r"C:\Users\jampel\Documents\spaceship game\Assets\backgroung image.jpg")
+background_img = pygame.transform.scale(background_img, (SCREEN_WIDTH, SCREEN_HEIGHT))
+
+# Load the start button image
+start_img = pygame.image.load(r"C:\Users\jampel\Documents\spaceship game\Assets\sticker.webp").convert_alpha()
+
+# Button class
+class Button():
+    def __init__(self, x, y, image, scale):
+        width = image.get_width()
+        height = image.get_height()
+        self.image = pygame.transform.scale(image, (int(width * scale), int(height * scale)))
+        self.rect = self.image.get_rect(topleft=(x, y))
+        self.clicked = False
+   
+    def draw(self):
+        action = False
+        pos = pygame.mouse.get_pos()
+
+        if self.rect.collidepoint(pos):
+            if pygame.mouse.get_pressed()[0] == 1 and self.clicked is False:              
+                self.clicked = True
+                action = True
+
+            if pygame.mouse.get_pressed()[0] == 0:
+                self.clicked = False
+
+        Screen.blit(self.image, self.rect.topleft)
+        return action
+
+# Create the button instance
+start_button = Button(300, 150, start_img, 0.5)
+
+# Game loop
+run = True
+
+def game_logic():
+    print("The game has started!")
+
+# Render the "TANK BATTLE" text
+font = pygame.font.Font(None, 56)
+game_title = font.render("TANK BATTLE : Metal Mayhem", True, (0, 0, 0))  # Black color
+
+while run:
+
+    # Display the background image
+    Screen.blit(background_img, (0, 0))
+
+    if start_button.draw():
+        print('START')
+        game_logic()  # Call the game logic function when the "START" button is clicked
+
+    # Display the "TANK BATTLE" text
+    welcome_rect = game_title.get_rect(center=(SCREEN_WIDTH // 3, 50))
+    Screen.blit(game_title, welcome_rect)
+
+    # Display the "press Esc to quit" text
+    welcome_text = font.render("press Esc to quit", True, (255, 255, 255))
+    welcome_rect = welcome_text.get_rect(center=(SCREEN_WIDTH // 2, 450))
+    Screen.blit(welcome_text, welcome_rect)
+
+    # Event handler
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            run = False
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                run = False
+
+    # Update the display
+    pygame.display.update()
+
+pygame.quit()
